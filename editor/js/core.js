@@ -37,6 +37,28 @@ function Editor(id) {
 }
 
 Editor.prototype = {
+    drawGrid: function() {
+        for (var i = 0; i < this.width / Core.Config.tileWidth; i++) {
+            var x = i * Core.Config.tileWidth;
+            var y = this.height;
+            this.context.beginPath();
+            this.context.strokeStyle = Core.Config.editorLineGridStyle;
+            this.context.moveTo(x, 0);
+            this.context.lineTo(x, y);
+            this.context.stroke();
+            this.context.closePath();
+        }
+        for (var i = 0; i < this.height / Core.Config.tileHeight; i++) {
+            var x = this.width;
+            var y = i * Core.Config.tileHeight;
+            this.context.beginPath();
+            this.context.strokeStyle = Core.Config.editorLineGridStyle;
+            this.context.moveTo(0, y);
+            this.context.lineTo(x, y);
+            this.context.stroke();
+            this.context.closePath();
+        }
+    },
     drawBlocks: function(blocks) {
         switch (this.currentBlock) {
             case 0:
@@ -60,6 +82,7 @@ Editor.prototype = {
     },
     drawEditor: function() {
         this.clearEditor();
+        this.drawGrid();
         this.drawBlocks(Core.Variables.Blocks);
     },
     calculateSize: function() {
@@ -173,7 +196,8 @@ var Core = {
         tileForestSrc: '../images/forest.png',
         tileSteelSrc: '../images/steel.png',
         tileWaterSrc: '../images/water.png',
-        timerInterval: 50
+        timerInterval: 50,
+        editorLineGridStyle: 'red'
     },
     Variables: {
         Console: null,
