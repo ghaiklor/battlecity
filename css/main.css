@@ -6,3 +6,48 @@
 #scene{
     display: block;
 }
+
+.panel{
+    position: absolute;
+    width: 200px;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    background: #e2e2e2; /* Old browsers */
+    background: -moz-linear-gradient(left,  #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e2e2e2), color-stop(50%,#dbdbdb), color-stop(51%,#d1d1d1), color-stop(100%,#fefefe)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* IE10+ */
+    background: linear-gradient(to right,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=1 ); /* IE6-9 */
+    box-shadow: 4px 0px 3px 0px black inset;
+}
+
+.images{
+    margin: 20px auto;
+    text-align: center;
+}
+
+.one-image, .one-image img{
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+}
+
+.one-image img{
+    border: 1px solid black;
+    outline: 1px solid darkred;
+}
+
+.one-image:hover{
+    cursor: pointer;
+}
+
+.one-image-active{
+    transform: scale(1.2);
+}
+
+.spacer{
+    clear: both;
+}
