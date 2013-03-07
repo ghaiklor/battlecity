@@ -141,13 +141,19 @@ Events.prototype = {
     },
     editorCanvasOnMouseMove: function(e) {
         //Core.Variables.Console.writeDebug(e);
-        Core.Variables.Blocks.x = e.clientX;
-        Core.Variables.Blocks.y = e.clientY;
-        var widthIndexBlock = Math.floor(Core.Variables.Blocks.x / Core.Config.tileWidth);
-        var heightIndexBlock = Math.floor(Core.Variables.Blocks.y / Core.Config.tileHeight);
-        Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth;
-        Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight;
-        //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);
+        var maxX = Core.Variables.Editor.offsetXEditor + Core.Variables.Editor.width;
+        var minX = Core.Variables.Editor.offsetXEditor;
+        var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.height;
+        var minY = Core.Variables.Editor.offsetYEditor;
+        if (e.clientX < maxX || e.clientX > minX || e.clientY < maxY || e.clientY > minY) {
+            Core.Variables.Blocks.x = e.clientX - Core.Variables.Editor.offsetXEditor;
+            Core.Variables.Blocks.y = e.clientY - Core.Variables.Editor.offsetYEditor;
+            var widthIndexBlock = Math.floor(Core.Variables.Blocks.x / Core.Config.tileWidth);
+            var heightIndexBlock = Math.floor(Core.Variables.Blocks.y / Core.Config.tileHeight);
+            Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth + Core.Variables.Editor.offsetXEditor;
+            Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight + Core.Variables.Editor.offsetYEditor;
+            //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);            
+        }
         return true;
     },
     editorCanvasOnMouseDown: function(e) {
