@@ -173,7 +173,7 @@ Events.prototype = {
         Core.Config.widthTilesCount = widthCountTiles;
         Core.Config.heightTilesCount = heightCountTiles;
         Core.Variables.Console.writeDebug('Map size: ' + widthCountTiles + ' x ' + heightCountTiles);
-        Core.InitializeEditor();
+        Core.EntryPoint();
         return true;
     },
     bindAllEvents: function() {
@@ -250,8 +250,8 @@ var Core = {
         tileWaterSrc: '../images/water.png',
         timerInterval: 50,
         editorLineGridStyle: 'red',
-        widthTilesCount: 10,
-        heightTilesCount: 10
+        widthTilesCount: 15,
+        heightTilesCount: 7
     },
     Variables: {
         Console: null,
@@ -287,3 +287,6 @@ var documentReadyInterval = setInterval(function() {
         Core.EntryPoint();
     }
 }, 10);
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////COPYRIGHT by ghaiklor//////////////////////////////
+////////////////////////////////////////////////////////////////////////////////

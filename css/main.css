@@ -30,9 +30,18 @@
 }
 
 .images fieldset{
-    width: 180px;
+    width: 160px;
+    text-align: center;
     margin: 0 auto;
-    padding: 2px;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.images fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
 }
 
 .one-image, .one-image img{
@@ -63,8 +72,32 @@
     margin: 10px auto;
 }
 
-.panel .map-size input{
+.panel .input-size input{
     width: 50px;
+    border: 1px solid darkred;
+    padding: 5px;
+    text-align: center;
+}
+
+.panel .input-size input:focus{
+    box-shadow: 0px -2px 0px 0px darkred inset, 0px 0px 2px 0px black;
+}
+
+.panel .map-size button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.panel .map-size button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .map-size button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
 }
 
 .panel .map-size fieldset{
@@ -84,4 +117,11 @@
 
 .accept-input-size{
     margin-top: 5px;
+}
+
+.copyright{
+    margin-top: 30px;
+    text-align: center;
+    font-size: .8em;
+    text-decoration: none;
 }
