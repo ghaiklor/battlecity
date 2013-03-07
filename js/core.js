@@ -297,9 +297,10 @@ Map.prototype = {
         water: null
     },
     loadMask: function(src) { //TODO: create Map Editor and realize saving
-        this.mask = [[0, 1, 0, 2, 2, 3, 1, 0], [0, 3, 0, 2, 3, 2, 3, 1], [0, 2, 2, 1, 2, 1, 2, 3], [0, 3, 3, 1, 2, 3, 1, 3], [0, 2, 3, 2, 1, 1, 2, 0]];
-        this.countTilesHeight = 5;
-        this.countTilesWidth = 8;
+        this.mask = localStorage.getItem(src);
+        //[[0, 1, 0, 2, 2, 3, 1, 0], [0, 3, 0, 2, 3, 2, 3, 1], [0, 2, 2, 1, 2, 1, 2, 3], [0, 3, 3, 1, 2, 3, 1, 3], [0, 2, 3, 2, 1, 1, 2, 0]];
+        this.countTilesHeight = 7;
+        this.countTilesWidth = 15;
     }
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -366,7 +367,7 @@ var Core = {
         Core.Variables.MainScene = new Scene('scene'); //DONE
         Core.Variables.MainScene.recalcSize(); //DONE
         Core.Variables.Map = new Map(); //DONE
-        Core.Variables.Map.loadMask('../maps/test.map'); //TODO: realize param in object, which shows src to file with map
+        Core.Variables.Map.loadMask('Test Map'); //TODO: realize param in object, which shows src to file with map
         Core.Variables.Map.calculateOffsetMap(); //DONE
         Core.Variables.Map.loadResources(); //DONE
         Core.Variables.PlayerTank = new Tank(Core.Config.tileTankSrc, Core.Variables.Map.offsetXMap, Core.Variables.Map.offsetYMap, Core.Config.tileTankWidth, Core.Config.tileTankHeight, Core.Config.tankDirection, Core.Config.tankSpeed); //DONE

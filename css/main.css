@@ -124,8 +124,54 @@
 }
 
 .copyright{
-    margin-top: 30px;
+    position: absolute;
+    bottom: 0px;
+    right: 17px;
+    margin-bottom: 10px;
     text-align: center;
     font-size: .8em;
     text-decoration: none;
+}
+
+.save fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.save fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.save input{
+    width: 100px;
+    border: 1px solid darkred;
+    padding: 5px;
+    text-align: center;
+}
+
+.save input:focus{
+    box-shadow: 0px -2px 0px 0px darkred inset, 0px 0px 2px 0px black;
+}
+
+.save button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.save button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.save button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
 }

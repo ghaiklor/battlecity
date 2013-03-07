@@ -102,7 +102,6 @@ Editor.prototype = {
     },
     drawMapMaskBlock: function(blockIndex, x, y) {
         var block = Core.Variables.Blocks;
-        Core.Variables.Console.writeDebug(blockIndex);
         switch (blockIndex) {
             case 0:
                 this.context.drawImage(block.brick, x, y, Core.Config.tileWidth, Core.Config.tileHeight);
@@ -175,6 +174,8 @@ function Events() {
     this.widthCountTilesInput = document.getElementById(Core.Config.widthCountTilesInputId);
     this.heightCountTilesInput = document.getElementById(Core.Config.heightCountTilesInputId);
     this.createNewMapButton = document.getElementById(Core.Config.createNewMapButtonId);
+    this.saveMapNameInput = document.getElementById(Core.Config.saveMapNameInputId);
+    this.saveMapButton = document.getElementById(Core.Config.saveMapButtonId);
     this.editorMousePressed = false;
     return this;
 }
@@ -227,7 +228,6 @@ Events.prototype = {
         return true;
     },
     editorCanvasOnMouseMove: function(e) {
-        //Core.Variables.Console.writeDebug(e);
         if (this.checkMouseInEditor(e.clientX, e.clientY)) {
             var widthIndexBlock = this.calculateIndexOfCellX(e.clientX);
             var heightIndexBlock = this.calculateIndexOfCellY(e.clientY);
@@ -236,7 +236,7 @@ Events.prototype = {
             if (this.editorMousePressed) {
                 Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
             }
-            //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);        
+            Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);
         }
         return true;
     },
@@ -244,12 +244,12 @@ Events.prototype = {
         if (this.checkMouseInEditor(e.clientX, e.clientY)) {
             Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
             this.editorMousePressed = true;
-            //Core.Variables.Console.writeDebug(e);
         }
         return true;
     },
     editorCanvasOnMouseUp: function(e) {
         this.editorMousePressed = false;
+        return true;
     },
     createNewMapButtonDown: function(e) {
         var widthCountTiles = this.widthCountTilesInput.value;
@@ -258,6 +258,14 @@ Events.prototype = {
         Core.Config.heightTilesCount = heightCountTiles;
         Core.Variables.Console.writeDebug('Map size: ' + widthCountTiles + ' x ' + heightCountTiles);
         Core.EntryPoint();
+        return true;
+    },
+    saveMapButtonDown: function(e) {
+        var mapName = this.saveMapNameInput.value;
+        localStorage.setItem(mapName, Core.Variables.Editor.mapMask);
+        Core.Variables.Console.writeDebug('Map Name = ' + mapName);
+        Core.Variables.Console.writeDebug('Map Mask from Object: ' + Core.Variables.Editor.mapMask);
+        Core.Variables.Console.writeDebug('Map Mask from LocalStorage: ' + localStorage.getItem(mapName));
         return true;
     },
     bindAllEvents: function() {
@@ -285,6 +293,9 @@ Events.prototype = {
         };
         this.createNewMapButton.onmousedown = function(e) {
             self.createNewMapButtonDown(e);
+        };
+        this.saveMapButton.onmousedown = function(e) {
+            self.saveMapButtonDown(e);
         };
         return true;
     }
@@ -336,6 +347,8 @@ var Core = {
         widthCountTilesInputId: 'widthCountTiles-input',
         heightCountTilesInputId: 'heightCountTiles-input',
         createNewMapButtonId: 'createMap-button',
+        saveMapNameInputId: 'nameMap-input',
+        saveMapButtonId: 'saveMap-button',
         tileWidth: 48,
         tileHeight: 48,
         tileBrickSrc: '../images/brick.png',
