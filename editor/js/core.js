@@ -129,8 +129,15 @@ Events.prototype = {
         //Core.Variables.Console.writeDebug(e);
         Core.Variables.Blocks.x = e.clientX;
         Core.Variables.Blocks.y = e.clientY;
-        Core.Variables.Blocks.centerX = e.clientX - Core.Config.tileWidth / 2;
-        Core.Variables.Blocks.centerY = e.clientY - Core.Config.tileHeight / 2;
+        var widthIndexBlock = Math.floor(Core.Variables.Blocks.x / Core.Config.tileWidth);
+        var heightIndexBlock = Math.floor(Core.Variables.Blocks.y / Core.Config.tileHeight);
+        Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth;
+        Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight;
+        //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);
+        return true;
+    },
+    editorCanvasOnMouseDown: function(e) {
+        Core.Variables.Console.writeDebug(e);
         return true;
     },
     bindAllEvents: function() {
@@ -150,6 +157,9 @@ Events.prototype = {
         this.editorCanvas.onmousemove = function(e) {
             self.editorCanvasOnMouseMove(e);
         };
+        this.editorCanvas.onmousedown = function(e) {
+            self.editorCanvasOnMouseDown(e);
+        }
         return true;
     }
 
