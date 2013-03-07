@@ -175,10 +175,22 @@ function Events() {
     this.widthCountTilesInput = document.getElementById(Core.Config.widthCountTilesInputId);
     this.heightCountTilesInput = document.getElementById(Core.Config.heightCountTilesInputId);
     this.createNewMapButton = document.getElementById(Core.Config.createNewMapButtonId);
+    this.editorMousePressed = false;
     return this;
 }
 
 Events.prototype = {
+    checkMouseInEditor: function(x, y) {
+        var maxX = Core.Variables.Editor.offsetXEditor + Core.Variables.Editor.editorWidth;
+        var minX = Core.Variables.Editor.offsetXEditor;
+        var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.editorHeight;
+        var minY = Core.Variables.Editor.offsetYEditor;
+        if (x < maxX && x > minX && y < maxY && y > minY) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     calculateIndexOfCellX: function(x) {
         var widthIndexBlock = Math.floor((x - Core.Variables.Editor.offsetXEditor) / Core.Config.tileWidth);
         return widthIndexBlock;
@@ -216,25 +228,28 @@ Events.prototype = {
     },
     editorCanvasOnMouseMove: function(e) {
         //Core.Variables.Console.writeDebug(e);
-        var maxX = Core.Variables.Editor.offsetXEditor + Core.Variables.Editor.editorWidth;
-        var minX = Core.Variables.Editor.offsetXEditor;
-        var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.editorHeight;
-        var minY = Core.Variables.Editor.offsetYEditor;
-        if (e.clientX < maxX && e.clientX > minX && e.clientY < maxY && e.clientY > minY) {
+        if (this.checkMouseInEditor(e.clientX, e.clientY)) {
             var widthIndexBlock = this.calculateIndexOfCellX(e.clientX);
             var heightIndexBlock = this.calculateIndexOfCellY(e.clientY);
             Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth + Core.Variables.Editor.offsetXEditor;
             Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight + Core.Variables.Editor.offsetYEditor;
-            //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);            
-        } else {
-            //TODO: realize hiding block on mouseout
+            if (this.editorMousePressed) {
+                Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
+            }
+            //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);        
         }
         return true;
     },
     editorCanvasOnMouseDown: function(e) {
-        Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
-        //Core.Variables.Console.writeDebug(e);
+        if (this.checkMouseInEditor(e.clientX, e.clientY)) {
+            Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
+            this.editorMousePressed = true;
+            //Core.Variables.Console.writeDebug(e);
+        }
         return true;
+    },
+    editorCanvasOnMouseUp: function(e) {
+        this.editorMousePressed = false;
     },
     createNewMapButtonDown: function(e) {
         var widthCountTiles = this.widthCountTilesInput.value;
@@ -264,6 +279,9 @@ Events.prototype = {
         };
         this.editorCanvas.onmousedown = function(e) {
             self.editorCanvasOnMouseDown(e);
+        };
+        this.editorCanvas.onmouseup = function(e) {
+            self.editorCanvasOnMouseUp(e);
         };
         this.createNewMapButton.onmousedown = function(e) {
             self.createNewMapButtonDown(e);
