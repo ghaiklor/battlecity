@@ -41,8 +41,8 @@ function Editor(id) {
 }
 
 Editor.prototype = {
-    drawGrid: function() { //TODO: realize right drawing for autoscaling for grid
-        for (var i = 0; i < this.widthCountCells; i++) {
+    drawGrid: function() {
+        for (var i = 0; i <= this.widthCountCells; i++) {
             var x = i * Core.Config.tileWidth + this.offsetXEditor;
             var y_start = this.offsetYEditor;
             var y_finish = this.editorHeight + this.offsetYEditor;
@@ -53,13 +53,14 @@ Editor.prototype = {
             this.context.stroke();
             this.context.closePath();
         }
-        for (var i = 0; i < this.heightCountCells; i++) {
-            var x = this.width;
-            var y = i * Core.Config.tileHeight;
+        for (var i = 0; i <= this.heightCountCells; i++) {
+            var x_start = this.offsetXEditor;
+            var x_finish = this.offsetXEditor + this.editorWidth;
+            var y = i * Core.Config.tileHeight + this.offsetYEditor;
             this.context.beginPath();
             this.context.strokeStyle = Core.Config.editorLineGridStyle;
-            this.context.moveTo(0, y);
-            this.context.lineTo(x, y);
+            this.context.moveTo(x_start, y);
+            this.context.lineTo(x_finish, y);
             this.context.stroke();
             this.context.closePath();
         }
@@ -98,7 +99,8 @@ Editor.prototype = {
         this.editorWidth = this.widthCountCells * Core.Config.tileWidth;
         this.editorHeight = this.heightCountCells * Core.Config.tileHeight;
         this.offsetXEditor = this.width / 2 - this.editorWidth / 2;
-        this.offsetYEditor = this.height / 2 - this.feditorHeight / 2;
+        this.offsetYEditor = this.height / 2 - this.editorHeight / 2;
+        Core.Variables.Console.writeDebug('Editor offsetX = ' + this.offsetXEditor + ', Editor offsetY = ' + this.offsetYEditor);
         return true;
     },
     startTimer: function() {
