@@ -128,20 +128,31 @@ function Events() {
 }
 
 Events.prototype = {
+    imagesButtonOnChange: function(domElement) {
+        this.brickButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
+        this.forestButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
+        this.steelButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
+        this.waterButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
+        domElement.className += ' one-image-active';
+    },
     brickButtonOnMouseDown: function() {
         Core.Variables.Editor.currentBlock = 0;
+        this.imagesButtonOnChange(this.brickButton);
         return true;
     },
     forestButtonOnMouseDown: function() {
         Core.Variables.Editor.currentBlock = 1;
+        this.imagesButtonOnChange(this.forestButton);
         return true;
     },
     steelButtonOnMouseDown: function() {
         Core.Variables.Editor.currentBlock = 2;
+        this.imagesButtonOnChange(this.steelButton);
         return true;
     },
     waterButtonOnMouseDown: function() {
         Core.Variables.Editor.currentBlock = 3;
+        this.imagesButtonOnChange(this.waterButton);
         return true;
     },
     editorCanvasOnMouseMove: function(e) {
