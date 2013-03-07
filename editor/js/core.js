@@ -31,8 +31,8 @@ function Editor(id) {
     this.height = 600;
     this.offsetXEditor = 0;
     this.offsetYEditor = 0;
-    this.widthCountCells = 8;
-    this.heightCountCells = 8;
+    this.widthCountCells = 10;
+    this.heightCountCells = 10;
     this.canvas = document.getElementById(id);
     this.context = this.canvas.getContext('2d');
     this.currentBlock = -1;
@@ -141,11 +141,11 @@ Events.prototype = {
     },
     editorCanvasOnMouseMove: function(e) {
         //Core.Variables.Console.writeDebug(e);
-        var maxX = Core.Variables.Editor.offsetXEditor + Core.Variables.Editor.width;
+        var maxX = Core.Variables.Editor.offsetXEditor + Core.Variables.Editor.editorWidth;
         var minX = Core.Variables.Editor.offsetXEditor;
-        var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.height;
+        var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.editorHeight;
         var minY = Core.Variables.Editor.offsetYEditor;
-        if (e.clientX < maxX || e.clientX > minX || e.clientY < maxY || e.clientY > minY) {
+        if (e.clientX < maxX && e.clientX > minX && e.clientY < maxY && e.clientY > minY) {
             Core.Variables.Blocks.x = e.clientX - Core.Variables.Editor.offsetXEditor;
             Core.Variables.Blocks.y = e.clientY - Core.Variables.Editor.offsetYEditor;
             var widthIndexBlock = Math.floor(Core.Variables.Blocks.x / Core.Config.tileWidth);
@@ -153,6 +153,8 @@ Events.prototype = {
             Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth + Core.Variables.Editor.offsetXEditor;
             Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight + Core.Variables.Editor.offsetYEditor;
             //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);            
+        } else {
+            //TODO: realize hiding block on mouseout
         }
         return true;
     },
