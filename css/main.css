@@ -51,3 +51,12 @@
 .spacer{
     clear: both;
 }
+
+.panel .map-size{
+    text-align: center;
+    margin: 10px auto;
+}
+
+.panel .map-size input{
+    width: 50px;
+}

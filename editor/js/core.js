@@ -29,6 +29,10 @@ Blocks.prototype = {
 function Editor(id) {
     this.width = 800;
     this.height = 600;
+    this.offsetXEditor = 0;
+    this.offsetYEditor = 0;
+    this.widthCountCells = 8;
+    this.heightCountCells = 8;
     this.canvas = document.getElementById(id);
     this.context = this.canvas.getContext('2d');
     this.currentBlock = -1;
@@ -37,18 +41,19 @@ function Editor(id) {
 }
 
 Editor.prototype = {
-    drawGrid: function() {
-        for (var i = 0; i < this.width / Core.Config.tileWidth; i++) {
-            var x = i * Core.Config.tileWidth;
-            var y = this.height;
+    drawGrid: function() { //TODO: realize right drawing for autoscaling for grid
+        for (var i = 0; i < this.widthCountCells; i++) {
+            var x = i * Core.Config.tileWidth + this.offsetXEditor;
+            var y_start = this.offsetYEditor;
+            var y_finish = this.editorHeight + this.offsetYEditor;
             this.context.beginPath();
             this.context.strokeStyle = Core.Config.editorLineGridStyle;
-            this.context.moveTo(x, 0);
-            this.context.lineTo(x, y);
+            this.context.moveTo(x, y_start);
+            this.context.lineTo(x, y_finish);
             this.context.stroke();
             this.context.closePath();
         }
-        for (var i = 0; i < this.height / Core.Config.tileHeight; i++) {
+        for (var i = 0; i < this.heightCountCells; i++) {
             var x = this.width;
             var y = i * Core.Config.tileHeight;
             this.context.beginPath();
@@ -90,6 +95,10 @@ Editor.prototype = {
         this.height = window.innerHeight;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+        this.editorWidth = this.widthCountCells * Core.Config.tileWidth;
+        this.editorHeight = this.heightCountCells * Core.Config.tileHeight;
+        this.offsetXEditor = this.width / 2 - this.editorWidth / 2;
+        this.offsetYEditor = this.height / 2 - this.feditorHeight / 2;
         return true;
     },
     startTimer: function() {
@@ -105,6 +114,9 @@ function Events() {
     this.steelButton = document.getElementById(Core.Config.steelButtonId);
     this.waterButton = document.getElementById(Core.Config.waterButtonId);
     this.editorCanvas = Core.Variables.Editor.canvas;
+    this.widthCountTilesInput = document.getElementById(Core.Config.widthCountTilesInputId);
+    this.heightCountTilesInput = document.getElementById(Core.Config.heightCountTilesInputId);
+    this.createNewMapButton = document.getElementById(Core.Config.createNewMapButtonId);
     return this;
 }
 
@@ -140,6 +152,10 @@ Events.prototype = {
         Core.Variables.Console.writeDebug(e);
         return true;
     },
+    createNewMapButtonDown: function(e) {
+        Core.Variables.Console.writeDebug(e);
+        return true;
+    },
     bindAllEvents: function() {
         var self = this;
         this.brickButton.onmousedown = function() {
@@ -159,7 +175,10 @@ Events.prototype = {
         };
         this.editorCanvas.onmousedown = function(e) {
             self.editorCanvasOnMouseDown(e);
-        }
+        };
+        this.createNewMapButton.onmousedown = function(e) {
+            self.createNewMapButtonDown(e);
+        };
         return true;
     }
 
@@ -200,6 +219,9 @@ var Core = {
         forestButtonId: 'forest-button',
         steelButtonId: 'steel-button',
         waterButtonId: 'water-button',
+        widthCountTilesInputId: 'widthCountTiles-input',
+        heightCountTilesInputId: 'heightCountTiles-input',
+        createNewMapButtonId: 'createMap-button',
         tileWidth: 48,
         tileHeight: 48,
         tileBrickSrc: '../images/brick.png',

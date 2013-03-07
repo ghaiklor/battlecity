@@ -10,15 +10,33 @@
             <canvas id="scene" width="800" height="600">Update your browser, please</canvas>
         </div>
         <div class="panel">
-            <div class="images">
-                <div class="one-image" id="brick-button"><img src="../images/brick.png"/></div>
-                <div class="one-image" id="forest-button"><img src="../images/forest.png"/></div>
-                <div class="spacer"></div>
-                <div class="one-image" id="steel-button"><img src="../images/steel.png"/></div>
-                <div class="one-image" id="water-button"><img src="../images/water.png"/></div>
+            <div class="map-size">
+                <fieldset>
+                    <legend>
+                        Размер карты:
+                    </legend> 
+                    <div class="input-size">
+                        <input type="number" id="widthCountTiles-input"/>
+                    </div>
+                    <div class="input-size">
+                        <input type="number" id="heightCountTiles-input"/>
+                    </div>
+                    <div class="accept-input-size">
+                        <button id="createMap-button">Создать карту</button>
+                    </div>
+                </fieldset>
             </div>
-            <div class="start-point">
-
+            <div class="images">
+                <fieldset>
+                    <legend>
+                        Элементы карты:
+                    </legend>
+                    <div class="one-image" id="brick-button"><img src="../images/brick.png"/></div>
+                    <div class="one-image" id="forest-button"><img src="../images/forest.png"/></div>
+                    <div class="spacer"></div>
+                    <div class="one-image" id="steel-button"><img src="../images/steel.png"/></div>
+                    <div class="one-image" id="water-button"><img src="../images/water.png"/></div>
+                </fieldset>
             </div>
         </div>
 
