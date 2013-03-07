@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////CLASS: Blocks//////////////////////////////////
+/////////This is a class of blocks (brick, steel, water, forest)////////////////
+/////////////All this saved here (in this class) with other/////////////////////
+////////////////////////////////////////////////////////////////////////////////
 function Blocks() {
     this.x = 0;
     this.y = 0;
@@ -26,6 +31,10 @@ Blocks.prototype = {
         return true;
     }
 };
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////CLASS: Editor////////////////////////////////
+/////////////It's a main class of editor. Here situated most of all/////////////
+/////////////////////////////properties and functions///////////////////////////
 function Editor(id) {
     this.width = 800;
     this.height = 600;
@@ -37,6 +46,14 @@ function Editor(id) {
     this.context = this.canvas.getContext('2d');
     this.currentBlock = -1;
     this.timer = null;
+    this.mapMask = [];
+    for (var i = 0; i < this.heightCountCells; i++) {
+        var tempArray = [];
+        for (var j = 0; j < this.widthCountCells; j++) {
+            tempArray.push(-1);
+        }
+        this.mapMask.push(tempArray);
+    }
     return this;
 }
 
@@ -83,6 +100,35 @@ Editor.prototype = {
                 break;
         }
     },
+    drawMapMaskBlock: function(blockIndex, x, y) {
+        var block = Core.Variables.Blocks;
+        Core.Variables.Console.writeDebug(blockIndex);
+        switch (blockIndex) {
+            case 0:
+                this.context.drawImage(block.brick, x, y, Core.Config.tileWidth, Core.Config.tileHeight);
+                break;
+            case 1:
+                this.context.drawImage(block.forest, x, y, Core.Config.tileWidth, Core.Config.tileHeight);
+                break;
+            case 2:
+                this.context.drawImage(block.steel, x, y, Core.Config.tileWidth, Core.Config.tileHeight);
+                break;
+            case 3:
+                this.context.drawImage(block.water, x, y, Core.Config.tileWidth, Core.Config.tileHeight);
+                break;
+            default:
+                break;
+        }
+    },
+    drawMapMask: function() {
+        for (var i = 0; i < Core.Variables.Editor.heightCountCells; i++) {
+            for (var j = 0; j < Core.Variables.Editor.widthCountCells; j++) {
+                var x = j * Core.Config.tileWidth + Core.Variables.Editor.offsetXEditor;
+                var y = i * Core.Config.tileHeight + Core.Variables.Editor.offsetYEditor;
+                this.drawMapMaskBlock(this.mapMask[i][j], x, y);
+            }
+        }
+    },
     clearEditor: function() {
         this.context.clearRect(0, 0, this.width, this.height);
     },
@@ -90,6 +136,7 @@ Editor.prototype = {
         this.clearEditor();
         this.drawGrid();
         this.drawBlocks(Core.Variables.Blocks);
+        this.drawMapMask();
     },
     calculateSize: function() {
         this.width = window.innerWidth - 200;
@@ -115,6 +162,10 @@ Editor.prototype = {
         self.timer = null;
     }
 };
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////CLASS: Events//////////////////////////////
+////////////////It's just a class for realize events in DOM/////////////////////
+////////////////////////////////////////////////////////////////////////////////
 function Events() {
     this.brickButton = document.getElementById(Core.Config.brickButtonId);
     this.forestButton = document.getElementById(Core.Config.forestButtonId);
@@ -128,6 +179,14 @@ function Events() {
 }
 
 Events.prototype = {
+    calculateIndexOfCellX: function(x) {
+        var widthIndexBlock = Math.floor((x - Core.Variables.Editor.offsetXEditor) / Core.Config.tileWidth);
+        return widthIndexBlock;
+    },
+    calculateIndexOfCellY: function(y) {
+        var heightIndexBlock = Math.floor((y - Core.Variables.Editor.offsetYEditor) / Core.Config.tileHeight);
+        return heightIndexBlock;
+    },
     imagesButtonOnChange: function(domElement) {
         this.brickButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
         this.forestButton.className = this.brickButton.className.replace(/(?:^|\s)one-image-active(?!\S)/g, '');
@@ -162,10 +221,8 @@ Events.prototype = {
         var maxY = Core.Variables.Editor.offsetYEditor + Core.Variables.Editor.editorHeight;
         var minY = Core.Variables.Editor.offsetYEditor;
         if (e.clientX < maxX && e.clientX > minX && e.clientY < maxY && e.clientY > minY) {
-            Core.Variables.Blocks.x = e.clientX - Core.Variables.Editor.offsetXEditor;
-            Core.Variables.Blocks.y = e.clientY - Core.Variables.Editor.offsetYEditor;
-            var widthIndexBlock = Math.floor(Core.Variables.Blocks.x / Core.Config.tileWidth);
-            var heightIndexBlock = Math.floor(Core.Variables.Blocks.y / Core.Config.tileHeight);
+            var widthIndexBlock = this.calculateIndexOfCellX(e.clientX);
+            var heightIndexBlock = this.calculateIndexOfCellY(e.clientY);
             Core.Variables.Blocks.centerX = widthIndexBlock * Core.Config.tileWidth + Core.Variables.Editor.offsetXEditor;
             Core.Variables.Blocks.centerY = heightIndexBlock * Core.Config.tileHeight + Core.Variables.Editor.offsetYEditor;
             //Core.Variables.Console.writeDebug('Index X = ' + widthIndexBlock + ', Index Y = ' + heightIndexBlock);            
@@ -175,7 +232,8 @@ Events.prototype = {
         return true;
     },
     editorCanvasOnMouseDown: function(e) {
-        Core.Variables.Console.writeDebug(e);
+        Core.Variables.Editor.mapMask[this.calculateIndexOfCellY(e.clientY)][this.calculateIndexOfCellX(e.clientX)] = Core.Variables.Editor.currentBlock;
+        //Core.Variables.Console.writeDebug(e);
         return true;
     },
     createNewMapButtonDown: function(e) {
@@ -214,6 +272,10 @@ Events.prototype = {
     }
 
 };
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////CLASS: Console/////////////////////////////////
+////////////////////////It's just a class for debugging/////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 function Console() {
     return this;
 }
@@ -243,6 +305,9 @@ Console.prototype = {
         }
     }
 };
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////CORE OF THE EDITOR//////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 var Core = {
     Config: {
         debugMode: true,
@@ -292,6 +357,9 @@ var Core = {
         Core.InitializeEditor();
     }
 };
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////Waiting for document loaded////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 var documentReadyInterval = setInterval(function() {
     if (document.readyState == 'complete') {
         clearInterval(documentReadyInterval);
