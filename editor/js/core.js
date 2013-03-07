@@ -31,8 +31,8 @@ function Editor(id) {
     this.height = 600;
     this.offsetXEditor = 0;
     this.offsetYEditor = 0;
-    this.widthCountCells = 10;
-    this.heightCountCells = 10;
+    this.widthCountCells = Core.Config.widthTilesCount;
+    this.heightCountCells = Core.Config.heightTilesCount;
     this.canvas = document.getElementById(id);
     this.context = this.canvas.getContext('2d');
     this.currentBlock = -1;
@@ -108,6 +108,11 @@ Editor.prototype = {
         this.timer = setInterval(function() {
             self.drawEditor();
         }, Core.Config.timerInterval);
+    },
+    stopTimer: function() {
+        var self = this;
+        clearInterval(self.timer);
+        self.timer = null;
     }
 };
 function Events() {
@@ -163,7 +168,12 @@ Events.prototype = {
         return true;
     },
     createNewMapButtonDown: function(e) {
-        Core.Variables.Console.writeDebug(e);
+        var widthCountTiles = this.widthCountTilesInput.value;
+        var heightCountTiles = this.heightCountTilesInput.value;
+        Core.Config.widthTilesCount = widthCountTiles;
+        Core.Config.heightTilesCount = heightCountTiles;
+        Core.Variables.Console.writeDebug('Map size: ' + widthCountTiles + ' x ' + heightCountTiles);
+        Core.InitializeEditor();
         return true;
     },
     bindAllEvents: function() {
@@ -239,7 +249,9 @@ var Core = {
         tileSteelSrc: '../images/steel.png',
         tileWaterSrc: '../images/water.png',
         timerInterval: 50,
-        editorLineGridStyle: 'red'
+        editorLineGridStyle: 'red',
+        widthTilesCount: 10,
+        heightTilesCount: 10
     },
     Variables: {
         Console: null,
@@ -248,6 +260,13 @@ var Core = {
         Blocks: null
     },
     InitializeEditor: function() {
+        if (Core.Variables.Editor != null && Core.Variables.Editor.timer != null) {
+            Core.Variables.Editor.stopTimer();
+            Core.Variables.Console = null;
+            Core.Variables.Events = null;
+            Core.Variables.Editor = null;
+            Core.Variables.Blocks = null;
+        }
         Core.Variables.Console = new Console(); //DONE
         Core.Variables.Console.writeInfo('Entry point was triggered'); //DONE
         Core.Variables.Editor = new Editor('scene'); //DONE

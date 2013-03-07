@@ -29,6 +29,12 @@
     text-align: center;
 }
 
+.images fieldset{
+    width: 180px;
+    margin: 0 auto;
+    padding: 2px;
+}
+
 .one-image, .one-image img{
     width: 48px;
     height: 48px;
@@ -59,4 +65,23 @@
 
 .panel .map-size input{
     width: 50px;
+}
+
+.panel .map-size fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.panel .map-size legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.accept-input-size{
+    margin-top: 5px;
 }
