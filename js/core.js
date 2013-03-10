@@ -42,16 +42,16 @@ Game.prototype = {
         for (var h_index = 0; h_index < map.countTilesHeight; h_index++) {
             for (var w_index = 0; w_index < map.countTilesWidth; w_index++) {
                 switch (map.mask[h_index][w_index]) {
-                    case 0:
+                    case '0':
                         scene.context.drawImage(map.environment.brick, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
-                    case 1:
+                    case '1':
                         scene.context.drawImage(map.environment.forest, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
-                    case 2:
+                    case '2':
                         scene.context.drawImage(map.environment.steel, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
-                    case 3:
+                    case '3':
                         scene.context.drawImage(map.environment.water, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
                 }
@@ -271,6 +271,16 @@ function Map() {
 }
 
 Map.prototype = {
+    fillMaskWithZero: function(width, height) {
+        this.mask = [];
+        for (var i = 0; i < height; i++) {
+            this.mask[i] = [];
+            for (var j = 0; j < width; j++) {
+                this.mask[i][j] = -1;
+            }
+        }
+        return true;
+    },
     calculateOffsetMap: function() {
         this.mapWidth = this.countTilesWidth * Core.Config.tileEnvironmentWidth;
         this.mapHeight = this.countTilesHeight * Core.Config.tileEnvironmentHeight;
@@ -296,11 +306,25 @@ Map.prototype = {
         steel: null,
         water: null
     },
-    loadMask: function(src) { //TODO: create Map Editor and realize saving
-        this.mask = localStorage.getItem(src);
+    loadMask: function(name) { //TODO: create Map Editor and realize saving
+        var maskString = localStorage.getItem(name); //String из LocalStorage (то, что мы сохраняем в редакторе)
+        var maskArray = maskString.split(','); //Разбиваем строку на элементы массива
+
         //[[0, 1, 0, 2, 2, 3, 1, 0], [0, 3, 0, 2, 3, 2, 3, 1], [0, 2, 2, 1, 2, 1, 2, 3], [0, 3, 3, 1, 2, 3, 1, 3], [0, 2, 3, 2, 1, 1, 2, 0]];
-        this.countTilesHeight = 7;
-        this.countTilesWidth = 15;
+
+        this.countTilesHeight = maskArray[1]; //Второй элемент - это высота карты
+        this.countTilesWidth = maskArray[0]; //Первый элемент - это ширина карты (количество блоков)
+
+        this.fillMaskWithZero(this.countTilesWidth, this.countTilesHeight); //Забиваем маску нулями (инициализация массива)
+
+        var maskCurrentIndex = 2;
+        for (var height = 0; height < this.countTilesHeight; height++) {
+            for (var width = 0; width < this.countTilesWidth; width++) {
+                this.mask[height][width] = maskArray[maskCurrentIndex];
+                maskCurrentIndex++;
+            }
+        }
+        //Core.Variables.Console.writeDebug('Map Mask: ' + this.mask);
     }
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -385,5 +409,11 @@ var documentReadyInterval = setInterval(function() {
     if (document.readyState === 'complete') {
         Core.EntryPoint();
         clearInterval(documentReadyInterval);
+        window.onresize = function() {
+            if (Core.Variables.MainScene != undefined) {
+                Core.Variables.MainScene.recalcSize();
+                Core.Variables.Map.calculateOffsetMap();
+            }
+        };
     }
 }, 10);

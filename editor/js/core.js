@@ -159,6 +159,20 @@ Editor.prototype = {
         var self = this;
         clearInterval(self.timer);
         self.timer = null;
+    },
+    convertMapMaskToString: function(mask) {
+        var widthCountTiles = this.widthCountCells;
+        var heightCountTiles = this.heightCountCells;
+        var maskInString = widthCountTiles + ',' + heightCountTiles + ',' + mask.join(',');
+        Core.Variables.Console.writeDebug(maskInString);
+        return maskInString;
+    },
+    saveMapMaskToLocalStorage: function(name) {
+        var mapName = name;
+        localStorage.setItem(mapName, this.convertMapMaskToString(this.mapMask));
+        Core.Variables.Console.writeDebug('Map Name = ' + mapName);
+        Core.Variables.Console.writeDebug('Map Mask from Object: ' + this.mapMask);
+        Core.Variables.Console.writeDebug('Map Mask from LocalStorage: ' + localStorage.getItem(mapName));
     }
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -261,11 +275,7 @@ Events.prototype = {
         return true;
     },
     saveMapButtonDown: function(e) {
-        var mapName = this.saveMapNameInput.value;
-        localStorage.setItem(mapName, Core.Variables.Editor.mapMask);
-        Core.Variables.Console.writeDebug('Map Name = ' + mapName);
-        Core.Variables.Console.writeDebug('Map Mask from Object: ' + Core.Variables.Editor.mapMask);
-        Core.Variables.Console.writeDebug('Map Mask from LocalStorage: ' + localStorage.getItem(mapName));
+        Core.Variables.Editor.saveMapMaskToLocalStorage(this.saveMapNameInput.value);
         return true;
     },
     bindAllEvents: function() {
