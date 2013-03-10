@@ -1,19 +1,18 @@
 /////////////////////////////////TODO://////////////////////////////////////////
-///////1. Fix the bug on check collision tank with map (right and down)/////////
-///////2. Realize map editor////////////////////////////////////////////////////
-///////3. Realize check tank on collision with blocks///////////////////////////
+///////1. Realize check tank on collision with blocks///////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////Class: Scene//////////////////////////////////////////////////
 /////////////This is a class of scene, where will drawing game objects//////////
 //Attributes: canvas, context, width, height////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 function Scene(id) {
-    this.canvas = document.getElementById(id);
-    this.context = this.canvas.getContext('2d');
+    this.canvas = document.getElementById(id); //ИД элемента с канвой
+    this.context = this.canvas.getContext('2d'); //контекст рендера
     return this;
 }
 
 Scene.prototype = {
+    //ф-ция пересчитывает размеры сцены и рендера под размеры браузера
     recalcSize: function() {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
@@ -27,21 +26,27 @@ Scene.prototype = {
 //Attributes: gameTimer and all others it's functions///////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 function Game() {
-    this.gameTimer = null;
+    this.gameTimer = null; //идентификатор на таймер игры
     return this;
 }
 
 Game.prototype = {
+    //ф-ция запрашивает каждый объект на обновление свойств
     globalUpdateValues: function() {
         if (Core.Variables.Keyboard.keyPressed) {
             Core.Variables.PlayerTank.moveTank();
             //Core.Variables.Console.writeDebug('Key is Pressed in globalUpdateValues');
         }
     },
+    //ф-ция рисует карту
     drawMap: function(scene, map) {
         for (var h_index = 0; h_index < map.countTilesHeight; h_index++) {
             for (var w_index = 0; w_index < map.countTilesWidth; w_index++) {
-                switch (map.mask[h_index][w_index]) {
+                switch (map.mask[h_index][w_index]) { //в зависимости от значения в маске он рисует нужное
+                    //0 - кирпич
+                    //1 - лес
+                    //2 - сталь
+                    //3 - вода
                     case '0':
                         scene.context.drawImage(map.environment.brick, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
@@ -58,11 +63,14 @@ Game.prototype = {
             }
         }
     },
+    //ф-ция рисует объект танка
     drawTank: function(scene, tank) {
         scene.context.beginPath();
+        //в зависимости от направления танка, он копирует участок изображения со всего изображения
         scene.context.drawImage(tank.image, tank.direction * tank.width, 0, tank.width, tank.height, tank.x, tank.y, tank.width, tank.height);
         scene.context.closePath();
     },
+    //ф-ция очищает контекст рендера
     clearScene: function(scene) {
         scene.context.clearRect(0, 0, scene.width, scene.height);
         scene.context.beginPath();
@@ -71,6 +79,8 @@ Game.prototype = {
         scene.context.fill();
         scene.context.closePath();
     },
+    //главная ф-ция отрисовки сцены
+    //на эту ф-ция вешается глобальный таймер игры
     drawScene: function() {
         this.globalUpdateValues();
         this.clearScene(Core.Variables.MainScene);
@@ -84,11 +94,12 @@ Game.prototype = {
 ///////////Attributes: keyPressed and all's other it's functions////////////////
 ////////////////////////////////////////////////////////////////////////////////
 function Keyboard() {
-    this.keyPressed = false;
+    this.keyPressed = false; //нажата ли клавиша в текущий момент
     return this;
 }
 
 Keyboard.prototype = {
+    //ф-ция конвертирует код клавиши в текстовое представление направления
     convertCodeToDirection: function(code) {
         switch (code) {
             case 37:
@@ -103,22 +114,30 @@ Keyboard.prototype = {
                 return false;
         }
     },
+    //ф-ция обрабатывает нажатие клавиши вниз
     keyDown: function(e) {
+        //конвертирует с кода в текстовое направление
         var direction = this.convertCodeToDirection(e.keyCode);
         if (direction) {
+            //и если было изменено направление, то задаем игровому танку новое направление
             Core.Variables.PlayerTank.setDirection(direction);
-            this.keyPressed = true;
+            this.keyPressed = true; //и еще поставим флаг нажатой клавиши
             //Core.Variables.Console.writeDebug('Key is press: ' + this.keyPressed);
             //Core.Variables.Console.writeDebug('Current direction: ' + direction);
         }
     },
+    //ф-ция обрабатывает отпускание клавиши
     keyUp: function(e) {
+        //проверяем для начала, нажата ли клавиша со стрелками
+        //да, туповато TODO: optimize this function
         var direction = this.convertCodeToDirection(e.keyCode);
         if (direction) {
+            //просто снимаем флаг нажатой клавиши при отпускании
             this.keyPressed = false;
             //Core.Variables.Console.writeDebug('Key is press: ' + this.keyPressed);
         }
     },
+    //ф-ция вешает обработки клавиш на ф-ции
     hookEvent: function() {
         var self = this;
         document.onkeydown = function(e) {
@@ -138,12 +157,15 @@ function GameTimer() {
 }
 
 GameTimer.prototype = {
+    //ф-ция записывает на объект игры созданный таймер игры
+    //запускает ф-цию прорисовки сцены в переданном объекте игры
     startGame: function(game) {
         game.gameTimer = setInterval(function() {
             game.drawScene();
         }, Core.Config.UpdateTimerInterval);
         Core.Variables.Console.writeInfo('Game is start');
     },
+    //ф-ция останавливает таймер в объекте игры
     stopGame: function(game) {
         clearInterval(game.gameTimer);
         Core.Variables.Console.writeInfo('Game is stoped');
@@ -158,18 +180,19 @@ GameTimer.prototype = {
 function Tank(imageSrc, x, y, width, height, direction, speed) {
     var image = new Image();
     image.src = imageSrc;
-    this.image = image;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.strDirection = direction;
-    this.setDirection(direction);
-    this.speed = speed;
+    this.image = image; //объект изображения с танком
+    this.x = x; //положение танка на рендере по Х
+    this.y = y; //положение танка на рендере по У
+    this.width = width; //ширина изображения танка
+    this.height = height; //высота изображения танка
+    this.strDirection = direction; //строковое представление направления танка
+    this.setDirection(direction); //инкапсулированный метод задания направления
+    this.speed = speed; //текущая скорость танка (на сколько px продвигать танк)
     return this;
 }
 
 Tank.prototype = {
+    //ф-ция проверяет, находится ли танк внутри карты (верхняя грань)
     checkInsideMapUp: function(map) {
         if (this.y - this.speed >= map.offsetYMap) {
             Core.Variables.Console.writeDebug('Tank inside map up');
@@ -178,6 +201,7 @@ Tank.prototype = {
             return false;
         }
     },
+    //ф-ция проверяет, находится ли танк внутри карты (правая грань)
     checkInsideMapRight: function(map) {
         if (this.x + this.speed <= map.offsetXMap + map.mapWidth - this.width + this.speed - 6) { //TODO: fix this bug
             Core.Variables.Console.writeDebug('Tank inside map right');
@@ -186,6 +210,7 @@ Tank.prototype = {
             return false;
         }
     },
+    //ф-ция проверяет, находится ли танк внутри карты (нижняя грань)
     checkInsideMapDown: function(map) {
         if (this.y + this.speed < map.offsetYMap + map.mapHeight - this.height) { //TODO: fix this bug
             Core.Variables.Console.writeDebug('Tank inside map down');
@@ -194,6 +219,7 @@ Tank.prototype = {
             return false;
         }
     },
+    //ф-ция проверяет, находится ли танк внутри карты (левая грань)
     checkInsideMapLeft: function(map) {
         if (this.x >= map.offsetXMap + this.speed) {
             Core.Variables.Console.writeDebug('Tank inside map left');
@@ -202,19 +228,26 @@ Tank.prototype = {
             return false;
         }
     },
-    checkCollisionBlocks: function() { //TODO: realize check for driving and collise with blocks
-        var tankInsideMap = this.checkInsideMap(Core.Variables.Map);
-        if (!tankInsideMap) {
-            return false;
-        } else {
-            return true;
-        }
+    //ф-ция проверяет на какой клетке находится танк
+    //пять типов клеток
+    //-1 - пустая
+    //0 - кирпич
+    //1 - лес
+    //2 - сталь
+    //3 - вода
+    //TODO: реализовать здесь проверку коллизий и изменения скорости танка
+    checkCollisionBlocks: function() {
         //Core.Variables.Console.writeDebug('Collision is checked');
     },
+    //это инкапсулированное свойство для направления танка
+    //в direction передается строка направления танка
+    //возможны 4 варианта "up", "down", "right", "left"
+    //ф-ция задает строковое и цифровое представление направления
     setDirection: function(direction) {
         this.strDirection = direction;
         this.direction = this.convertDirectionToInteger(direction);
     },
+    //ф-ция конвертирует из строкового представления направления в цифровое
     convertDirectionToInteger: function(direction) {
         switch (direction) {
             case 'up':
@@ -231,6 +264,9 @@ Tank.prototype = {
                 break;
         }
     },
+    //ф-ция обновляет значения положения танка на карте
+    //в зависимости от направления происходит инкрементация или декрементация
+    //изменяет значения относительно текущей скорости танка
     moveTank: function() {
         Core.Variables.Console.writeDebug('Tank X = ' + this.x + ', Tank Y = ' + this.y);
         switch (this.strDirection) {
@@ -263,67 +299,96 @@ Tank.prototype = {
 ////////Attributes: countTilesWidth, countTilesHeight///////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 function Map() {
-    this.countTilesHeight = 8;
-    this.countTilesWidth = 8;
-    this.offsetXMap = 100;
-    this.offsetYMap = 100;
+    this.countTilesHeight = 8; //количество спрайтов по высоте
+    this.countTilesWidth = 8; //количество спрайтов по ширине
+    this.offsetXMap = 100; //сдвиг отрисовки карты относительно оси Х
+    this.offsetYMap = 100; //сдвиг отрисовки карты относительно оси У
     return this;
 }
 
 Map.prototype = {
+    //ф-ция заполняет маску карты значениями "-1"
+    //эти значения означают пустую карту, то есть никаких блоков нету
+    //эти же значения используются для отрисовки дороги
+    //TODO: на -1 нужно добавить еще спрайт дороги
     fillMaskWithZero: function(width, height) {
-        this.mask = [];
+        this.mask = []; //инициализировали пустой массив в объекте
         for (var i = 0; i < height; i++) {
-            this.mask[i] = [];
+            this.mask[i] = []; //инициализируем пустой массив в текущем слоте
             for (var j = 0; j < width; j++) {
-                this.mask[i][j] = -1;
+                this.mask[i][j] = -1; //и забиваем всю маску "-1"
             }
         }
         return true;
     },
+    //ф-ция расчитывает сдвиг карты относительно левого верхнего угла
     calculateOffsetMap: function() {
+        //ширина карты = количество спрайтов по ширине * ширину самого спрайта (его размер)
         this.mapWidth = this.countTilesWidth * Core.Config.tileEnvironmentWidth;
+        //высота карты = количество спрайтов по высоте * высоту самого спрайта (его размер)
         this.mapHeight = this.countTilesHeight * Core.Config.tileEnvironmentHeight;
+        //центр карты = ширина главной сцены / 2
         var centerMapX = Core.Variables.MainScene.width / 2;
+        //центр карты = высота главной сцены / 2
         var centerMapY = Core.Variables.MainScene.height / 2;
+        //сдвиг карты по Х = центр карты по Х - ширину карты / 2
         this.offsetXMap = centerMapX - this.mapWidth / 2;
+        //сдвиг карты по У = центр карты по У - высоту карты / 2
         this.offsetYMap = centerMapY - this.mapHeight / 2;
     },
+    //ф-ция создает новый объект изображения и возвращает его
+    //в параметр мы лишь передаем ссылку на изображение (его местоположение)
     loadImage: function(src) {
         var image = new Image();
         image.src = src;
         return image;
     },
+    //ф-ция загружает все ресурсы карты
+    //в данном случае загружает все спрайты
     loadResources: function() {
-        this.environment.brick = this.loadImage(Core.Config.tileBrickSrc);
-        this.environment.forest = this.loadImage(Core.Config.tileForestSrc);
-        this.environment.steel = this.loadImage(Core.Config.tileSteelSrc);
-        this.environment.water = this.loadImage(Core.Config.tileWaterSrc);
+        this.environment.brick = this.loadImage(Core.Config.tileBrickSrc); //кирпич
+        this.environment.forest = this.loadImage(Core.Config.tileForestSrc); //лес
+        this.environment.steel = this.loadImage(Core.Config.tileSteelSrc); //сталь
+        this.environment.water = this.loadImage(Core.Config.tileWaterSrc); //вода
     },
+    //это объект с объектами окружения
+    //здесь лежат сгенерированные и загруженные спрайты окружения
     environment: {
         brick: null,
         forest: null,
         steel: null,
         water: null
     },
-    loadMask: function(name) { //TODO: create Map Editor and realize saving
-        var maskString = localStorage.getItem(name); //String из LocalStorage (то, что мы сохраняем в редакторе)
-        var maskArray = maskString.split(','); //Разбиваем строку на элементы массива
-
-        //[[0, 1, 0, 2, 2, 3, 1, 0], [0, 3, 0, 2, 3, 2, 3, 1], [0, 2, 2, 1, 2, 1, 2, 3], [0, 3, 3, 1, 2, 3, 1, 3], [0, 2, 3, 2, 1, 1, 2, 0]];
+    //ф-ция загружает маску карты
+    //маску карты можно генерировать в редакторе карт
+    //редактор карт можно включить перейдя по battlecity/editor
+    loadMask: function(name) {
+        //получаем значение маски и размеров карты с локального хранилища
+        //разбиваем его на массив
+        //в итоге получим вот такой массив:
+        //<ширина карты (количество тайлов)>, <высота карты (количество тайлов)>, <сама маска карты (значения от 0 до 3)>
+        var maskArray = localStorage.getItem(name).split(',');
 
         this.countTilesHeight = maskArray[1]; //Второй элемент - это высота карты
         this.countTilesWidth = maskArray[0]; //Первый элемент - это ширина карты (количество блоков)
 
-        this.fillMaskWithZero(this.countTilesWidth, this.countTilesHeight); //Забиваем маску нулями (инициализация массива)
+        //заполним маску карты "-1", то есть просто инициализируем массив маски
+        this.fillMaskWithZero(this.countTilesWidth, this.countTilesHeight);
 
+        //текущий индекс массива маски
+        //т.к. в локальном хранилище можно хранить только строки, приходится изощряться
+        //первые 2 элемента у нас размеры карты и лишь с 3 элемента идет сама маска
         var maskCurrentIndex = 2;
         for (var height = 0; height < this.countTilesHeight; height++) {
             for (var width = 0; width < this.countTilesWidth; width++) {
+                //в цикле перебираем всю строковую маску карты
+                //и присваиваем на маску текущего объекта значение данной клетки карты
                 this.mask[height][width] = maskArray[maskCurrentIndex];
+                //и конечно же увеличим текущий индекс маски
                 maskCurrentIndex++;
             }
         }
+        //в итоге мы получим исходный вид массива, какой он был при сохранении в редакторе
         //Core.Variables.Console.writeDebug('Map Mask: ' + this.mask);
     }
 };
@@ -336,6 +401,7 @@ function Console() {
 }
 
 Console.prototype = {
+    //ф-ция проверяет, включен ли режим отладки
     checkDebugMode: function() {
         if (Core.Config.debugMode) {
             return true;
@@ -343,9 +409,11 @@ Console.prototype = {
             return false;
         }
     },
+    //ф-ция просто записывает инфу в консоль
     writeInfo: function(text) {
         console.info(text);
     },
+    //а эта ф-ция проверяет на дебаг-мод и если включен, выводит в консоль
     writeDebug: function(text) {
         if (this.checkDebugMode()) {
             console.debug(text);
@@ -357,33 +425,40 @@ Console.prototype = {
 ////////////////////////////////////////////////////////////////////////////////
 var Core = {
     Config: {
-        debugMode: true, //Debug mode enabled
-        tileTankWidth: 48, //Width of one sprite (tank)
-        tileTankHeight: 48, //Height of one sprite (tank)
-        tileEnvironmentWidth: 50, //Width of one tile (environment)
-        tileEnvironmentHeight: 50, //Height of one tile (environment)
-        tilesCount: 8, //Count of tiles in one line (in this case size of field 8 * 8)
-        tileTankSrc: './images/tank.png', //Source to Tank Image
-        tankSpeed: 10, //Default speed of tank
-        tankDirection: 'up', //Default direction of tank
-        tileBrickSrc: './images/brick.png', //Brick tile src
-        tileForestSrc: './images/forest.png', //Forest tile src
-        tileSteelSrc: './images/steel.png', //Steel tile src
-        tileWaterSrc: './images/water.png', //Water tile src
-        UpdateTimerInterval: 50 //Interval of redrawing of scene
+        debugMode: true, //включен ли "дебаг-мод"
+        tileTankWidth: 48, //ширина спрайта танка
+        tileTankHeight: 48, //высота спрайта танка
+        //спрайты окружения сделаны чуть больше, потому что танком тяжелее будет управлять
+        //из-за нехватки свободного места
+        //TODO: сделать другие изображения спрайтов (более четкие)
+        tileEnvironmentWidth: 50, //ширина спрайта окружения
+        tileEnvironmentHeight: 50, //высота спрайта окружения
+        tilesCount: 8, //количество тайлов по умолчанию (8 * 8 - размеры карты)
+        tileTankSrc: './images/tank.png', //путь к спрайту с танком
+        tankSpeed: 10, //скорость танка по умолчанию
+        tankDirection: 'up', //направление танка по умолчанию
+        tileBrickSrc: './images/brick.png', //путь спрайта с кирпичом
+        tileForestSrc: './images/forest.png', //путь спрайта с лесом
+        tileSteelSrc: './images/steel.png', //путь спрайта со сталью
+        tileWaterSrc: './images/water.png', //путь спрайта с водой
+        UpdateTimerInterval: 50 //интервал, при котором вызывается ф-ция перерисовки сцены
     },
     Variables: {
-        MainScene: null, //Object of Scene
-        Game: null, //Object of Game
-        GameTimer: null, //Object of GameTimer
-        PlayerTank: null, //Object of player's tank
-        Console: null, //Object of Console
-        Map: null, //Object of Map
-        Keyboard: null //Object of Keyboard
+        //тут хранятся все объекты, созданные конструктором
+        MainScene: null, //главная сцена, на которой все рисуем
+        Game: null, //сама игра, в которой происходит отрисовка кадров
+        GameTimer: null, //игровой таймер, в нем только старт и стоп
+        PlayerTank: null, //непосредственно сам игровой танк
+        Console: null, //объект консоли для дебага
+        Map: null, //карта, которая вырисовывается на сцене
+        Keyboard: null //объект клавиатуры, который отвечает за события клавиатуры
     },
     ////////////////////////////////////////////////////////////////////////////
     //////////////////////////ENTRY POINT OF GAME///////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+    //ф-ция инициализирует игру
+    //вызывает целую кучу ф-ция и конструкторов
+    //заполняет Core.Variables объекты
     InitializeGame: function() {
         Core.Variables.Console = new Console(); //DONE
         Core.Variables.Keyboard = new Keyboard(); //DONE
@@ -391,7 +466,7 @@ var Core = {
         Core.Variables.MainScene = new Scene('scene'); //DONE
         Core.Variables.MainScene.recalcSize(); //DONE
         Core.Variables.Map = new Map(); //DONE
-        Core.Variables.Map.loadMask('Test Map'); //TODO: realize param in object, which shows src to file with map
+        Core.Variables.Map.loadMask('Test Map'); //DONE
         Core.Variables.Map.calculateOffsetMap(); //DONE
         Core.Variables.Map.loadResources(); //DONE
         Core.Variables.PlayerTank = new Tank(Core.Config.tileTankSrc, Core.Variables.Map.offsetXMap, Core.Variables.Map.offsetYMap, Core.Config.tileTankWidth, Core.Config.tileTankHeight, Core.Config.tankDirection, Core.Config.tankSpeed); //DONE
@@ -400,18 +475,27 @@ var Core = {
         Core.Variables.GameTimer.startGame(Core.Variables.Game); //DONE
         Core.Variables.Console.writeInfo('Entry Point triggered'); //DONE
     },
+    //точка входа в скрипт
     EntryPoint: function() {
         Core.InitializeGame();
     }
 };
 
+//этой ф-цией дожидаюсь полной загрузки страницы
+//и при полной загрузке вызываю точку входа
 var documentReadyInterval = setInterval(function() {
+    //если документ загружен
     if (document.readyState === 'complete') {
-        Core.EntryPoint();
+        Core.EntryPoint(); //точка входа в игру
+        //очистили интервал ожидания загрузки страницы
         clearInterval(documentReadyInterval);
+        //еще и задам на изменение размеров окна
         window.onresize = function() {
+            //если игра уже инициализирована
             if (Core.Variables.MainScene != undefined) {
+                //пересчитать размеры сцены
                 Core.Variables.MainScene.recalcSize();
+                //и пересчитать размеры карты
                 Core.Variables.Map.calculateOffsetMap();
             }
         };
