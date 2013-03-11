@@ -188,10 +188,16 @@ function Tank(imageSrc, x, y, width, height, direction, speed) {
     this.strDirection = direction; //строковое представление направления танка
     this.setDirection(direction); //инкапсулированный метод задания направления
     this.speed = speed; //текущая скорость танка (на сколько px продвигать танк)
+    this.currentCell = -1;
     return this;
 }
 
 Tank.prototype = {
+    calculateCurrentCell: function(x, y) {
+        var indexX = Math.floor((x - Core.Variables.Map.offsetXMap) / Core.Config.tileEnvironmentWidth);
+        var indexY = Math.floor((y - Core.Variables.Map.offsetYMap) / Core.Config.tileEnvironmentHeight);
+        return Core.Variables.Map.mask[indexY][indexX];
+    },
     //ф-ция проверяет, находится ли танк внутри карты (верхняя грань)
     checkInsideMapUp: function(map) {
         if (this.y - this.speed >= map.offsetYMap) {
@@ -236,8 +242,21 @@ Tank.prototype = {
     //2 - сталь
     //3 - вода
     //TODO: реализовать здесь проверку коллизий и изменения скорости танка
-    checkCollisionBlocks: function() {
-        //Core.Variables.Console.writeDebug('Collision is checked');
+    getBlockDown: function() {
+        var bottomCell = this.calculateCurrentCell(this.x, this.y + this.speed + this.height);
+        return bottomCell;
+    },
+    getBlockUp: function() {
+        var upperCell = this.calculateCurrentCell(this.x, this.y - this.speed);
+        return upperCell;
+    },
+    getBlockLeft: function() {
+        var leftCell = this.calculateCurrentCell(this.x - this.speed, this.y);
+        return leftCell;
+    },
+    getBlockRight: function() {
+        var rightCell = this.calculateCurrentCell(this.x + this.speed + this.width, this.y);
+        return rightCell;
     },
     //это инкапсулированное свойство для направления танка
     //в direction передается строка направления танка
@@ -268,27 +287,142 @@ Tank.prototype = {
     //в зависимости от направления происходит инкрементация или декрементация
     //изменяет значения относительно текущей скорости танка
     moveTank: function() {
-        Core.Variables.Console.writeDebug('Tank X = ' + this.x + ', Tank Y = ' + this.y);
+        var self = this;
+
+        function calculateNewPosition(direction) {
+            switch (direction) {
+                case 'up':
+                    if (self.checkInsideMapUp(Core.Variables.Map)) {
+                        self.y = self.y - self.speed;
+                    }
+                    break;
+                case 'down':
+                    if (self.checkInsideMapDown(Core.Variables.Map)) {
+                        self.y = self.y + self.speed;
+                    }
+                    break;
+                case 'left':
+                    if (self.checkInsideMapLeft(Core.Variables.Map)) {
+                        self.x = self.x - self.speed;
+                    }
+                    break;
+                case 'right':
+                    if (self.checkInsideMapRight(Core.Variables.Map)) {
+                        self.x = self.x + self.speed;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        //Core.Variables.Console.writeDebug('Current Cell = [' + this.currentCell + ']');
+        //Core.Variables.Console.writeDebug('Tank X = ' + this.x + ', Tank Y = ' + this.y);
         switch (this.strDirection) {
             case 'up':
-                if (this.checkInsideMapUp(Core.Variables.Map)) {
-                    this.y = this.y - this.speed;
+                var blockUp = this.getBlockUp();
+                Core.Variables.Console.writeDebug('Block up = ' + blockUp);
+                switch (blockUp) {
+                    case '0':
+                        break;
+                    case '1':
+                        if (this.currentCell != 1) {
+                            this.currentCell = 1;
+                            this.speed = Core.Config.decrementSpeedOnForest;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        if (this.currentCell != 3) {
+                            this.currentCell = 3;
+                            this.speed = Core.Config.decrementSpeedOnWater;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    default:
+                        break;
                 }
                 break;
             case 'down':
-                if (this.checkInsideMapDown(Core.Variables.Map)) {
-                    this.y = this.y + this.speed;
+                var blockDown = this.getBlockDown();
+                Core.Variables.Console.writeDebug('Block down = ' + blockDown);
+                switch (blockDown) {
+                    case '0':
+                        break;
+                    case '1':
+                        if (this.currentCell != 1) {
+                            this.currentCell = 1;
+                            this.speed = Core.Config.decrementSpeedOnForest;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        if (this.currentCell != 3) {
+                            this.currentCell = 3;
+                            this.speed = Core.Config.decrementSpeedOnWater;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    default:
+                        break;
                 }
+                calculateNewPosition(this.strDirection);
                 break;
             case 'left':
-                if (this.checkInsideMapLeft(Core.Variables.Map)) {
-                    this.x = this.x - this.speed;
+                var blockLeft = this.getBlockLeft();
+                Core.Variables.Console.writeDebug('Block left = ' + blockLeft);
+                switch (blockLeft) {
+                    case '0':
+                        break;
+                    case '1':
+                        if (this.currentCell != 1) {
+                            this.currentCell = 1;
+                            this.speed = Core.Config.decrementSpeedOnForest;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        if (this.currentCell != 3) {
+                            this.currentCell = 3;
+                            this.speed = Core.Config.decrementSpeedOnWater;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    default:
+                        break;
                 }
                 break;
             case 'right':
-                if (this.checkInsideMapRight(Core.Variables.Map)) {
-                    this.x = this.x + this.speed;
+                var blockRight = this.getBlockRight();
+                Core.Variables.Console.writeDebug('Block right = ' + blockRight);
+                switch (blockRight) {
+                    case '0':
+                        break;
+                    case '1':
+                        if (this.currentCell != 1) {
+                            this.currentCell = 1;
+                            this.speed = Core.Config.decrementSpeedOnForest;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    case '2':
+                        break;
+                    case '3':
+                        if (this.currentCell != 3) {
+                            this.currentCell = 3;
+                            this.speed = Core.Config.decrementSpeedOnWater;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
+                    default:
+                        break;
                 }
+                calculateNewPosition(this.strDirection);
                 break;
         }
     },
@@ -487,6 +621,8 @@ var Core = {
         UpdateTimerInterval: 50, //интервал, при котором вызывается ф-ция перерисовки сцены
         mapEditorButtonId: 'mapEditor-Button',
         changeMapSelectId: 'changeMap-select',
+        decrementSpeedOnForest: 3,
+        decrementSpeedOnWater: 5,
         defaultMapMask: '15,7,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,3,3,3,3,3,3,1,3,3,3,3,3,3,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2'
     },
     Variables: {
