@@ -391,7 +391,11 @@ Events.prototype = {
     saveMapButtonDown: function(e) {
         //вызываем ф-цию сохранения маски карты в локальное хранилище
         //и передаем в параметре имя карты, под которым нужно сохранить
-        Core.Variables.Editor.saveMapMaskToLocalStorage(this.saveMapNameInput.value);
+        if (localStorage.getItem(this.saveMapNameInput.value) != undefined) {
+            alert('Такая карта уже сохранена!');
+        } else {
+            Core.Variables.Editor.saveMapMaskToLocalStorage(this.saveMapNameInput.value);
+        }
         return true;
     },
     //ф-ция возвращает в игру

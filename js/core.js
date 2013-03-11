@@ -363,6 +363,9 @@ Map.prototype = {
     //маску карты можно генерировать в редакторе карт
     //редактор карт можно включить перейдя по battlecity/editor
     loadMask: function(name) {
+        if (localStorage.getItem(name) == undefined && name == 'default') {
+            localStorage.setItem(name, Core.Config.defaultMapMask);
+        }
         //получаем значение маски и размеров карты с локального хранилища
         //разбиваем его на массив
         //в итоге получим вот такой массив:
@@ -390,6 +393,16 @@ Map.prototype = {
         }
         //в итоге мы получим исходный вид массива, какой он был при сохранении в редакторе
         //Core.Variables.Console.writeDebug('Map Mask: ' + this.mask);
+    },
+    loadAllMapsFromLocalStorage: function() {
+        for (var map in localStorage) {
+            if (map != 'default') {
+                var option = document.createElement('option');
+                option.text = map;
+                option.value = map;
+                Core.Variables.Events.changeMapSelect.appendChild(option);
+            }
+        }
     }
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -422,7 +435,8 @@ Console.prototype = {
 };
 
 function Events() {
-    this.mapEditorButtonId = document.getElementById(Core.Config.mapEditorButtonId);
+    this.mapEditorButton = document.getElementById(Core.Config.mapEditorButtonId);
+    this.changeMapSelect = document.getElementById(Core.Config.changeMapSelectId);
     return this;
 }
 
@@ -430,10 +444,17 @@ Events.prototype = {
     mapEditorButtonOnClick: function() {
         window.location = '/editor';
     },
+    changeMapSelectOnChange: function() {
+        Core.Variables.Map.loadMask(this.changeMapSelect.value);
+        Core.Variables.Map.calculateOffsetMap();
+    },
     bindAllEvents: function() {
         var self = this;
-        this.mapEditorButtonId.onmousedown = function() {
+        this.mapEditorButton.onmousedown = function() {
             self.mapEditorButtonOnClick();
+        };
+        this.changeMapSelect.onchange = function() {
+            self.changeMapSelectOnChange();
         };
     }
 };
@@ -459,7 +480,9 @@ var Core = {
         tileSteelSrc: './images/steel.png', //путь спрайта со сталью
         tileWaterSrc: './images/water.png', //путь спрайта с водой
         UpdateTimerInterval: 50, //интервал, при котором вызывается ф-ция перерисовки сцены
-        mapEditorButtonId: 'mapEditor-Button'
+        mapEditorButtonId: 'mapEditor-Button',
+        changeMapSelectId: 'changeMap-select',
+        defaultMapMask: '15,7,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,3,3,3,3,3,3,1,3,3,3,3,3,3,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2'
     },
     Variables: {
         //тут хранятся все объекты, созданные конструктором
@@ -487,8 +510,9 @@ var Core = {
         Core.Variables.MainScene = new Scene('scene'); //DONE
         Core.Variables.MainScene.recalcSize(); //DONE
         Core.Variables.Map = new Map(); //DONE
-        Core.Variables.Map.loadMask('Test Map'); //DONE
+        Core.Variables.Map.loadMask('default'); //DONE
         Core.Variables.Map.calculateOffsetMap(); //DONE
+        Core.Variables.Map.loadAllMapsFromLocalStorage(); //DONE
         Core.Variables.Map.loadResources(); //DONE
         Core.Variables.PlayerTank = new Tank(Core.Config.tileTankSrc, Core.Variables.Map.offsetXMap, Core.Variables.Map.offsetYMap, Core.Config.tileTankWidth, Core.Config.tileTankHeight, Core.Config.tankDirection, Core.Config.tankSpeed); //DONE
         Core.Variables.Game = new Game(); //DONE
