@@ -291,6 +291,10 @@ Tank.prototype = {
                 }
                 break;
         }
+    },
+    setPosition: function(x, y) {
+        this.x = x;
+        this.y = y;
     }
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -447,6 +451,7 @@ Events.prototype = {
     changeMapSelectOnChange: function() {
         Core.Variables.Map.loadMask(this.changeMapSelect.value);
         Core.Variables.Map.calculateOffsetMap();
+        Core.Variables.PlayerTank.setPosition(Core.Variables.Map.offsetXMap, Core.Variables.Map.offsetYMap);
     },
     bindAllEvents: function() {
         var self = this;
