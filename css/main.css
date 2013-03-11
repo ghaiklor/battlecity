@@ -175,3 +175,69 @@
 .save button:active{
     box-shadow: 0px 0px 2px 1px black inset;
 }
+
+.panel .map{
+    margin: 10px auto;
+    text-align: center;
+}
+
+.panel .map fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.panel .map fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.panel .map select{
+    margin: 5px 0px;
+    border-radius: 0px;
+    border: 1px solid darkred;
+}
+
+.panel .map button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.panel .map button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .map button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}
+
+.panel .game{
+    margin: 10px auto;
+    text-align: center;
+}
+
+.panel .game button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+    font-size: .8em;
+}
+
+.panel .game button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .game button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}

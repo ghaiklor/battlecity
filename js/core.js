@@ -14,7 +14,7 @@ function Scene(id) {
 Scene.prototype = {
     //ф-ция пересчитывает размеры сцены и рендера под размеры браузера
     recalcSize: function() {
-        this.width = window.innerWidth;
+        this.width = window.innerWidth - 200;
         this.height = window.innerHeight;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
@@ -420,6 +420,23 @@ Console.prototype = {
         }
     }
 };
+
+function Events() {
+    this.mapEditorButtonId = document.getElementById(Core.Config.mapEditorButtonId);
+    return this;
+}
+
+Events.prototype = {
+    mapEditorButtonOnClick: function() {
+        window.location = '/editor';
+    },
+    bindAllEvents: function() {
+        var self = this;
+        this.mapEditorButtonId.onmousedown = function() {
+            self.mapEditorButtonOnClick();
+        };
+    }
+};
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////CORE OF MY GAME////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +458,8 @@ var Core = {
         tileForestSrc: './images/forest.png', //путь спрайта с лесом
         tileSteelSrc: './images/steel.png', //путь спрайта со сталью
         tileWaterSrc: './images/water.png', //путь спрайта с водой
-        UpdateTimerInterval: 50 //интервал, при котором вызывается ф-ция перерисовки сцены
+        UpdateTimerInterval: 50, //интервал, при котором вызывается ф-ция перерисовки сцены
+        mapEditorButtonId: 'mapEditor-Button'
     },
     Variables: {
         //тут хранятся все объекты, созданные конструктором
@@ -451,7 +469,8 @@ var Core = {
         PlayerTank: null, //непосредственно сам игровой танк
         Console: null, //объект консоли для дебага
         Map: null, //карта, которая вырисовывается на сцене
-        Keyboard: null //объект клавиатуры, который отвечает за события клавиатуры
+        Keyboard: null, //объект клавиатуры, который отвечает за события клавиатуры
+        Events: null
     },
     ////////////////////////////////////////////////////////////////////////////
     //////////////////////////ENTRY POINT OF GAME///////////////////////////////
@@ -463,6 +482,8 @@ var Core = {
         Core.Variables.Console = new Console(); //DONE
         Core.Variables.Keyboard = new Keyboard(); //DONE
         Core.Variables.Keyboard.hookEvent(); //DONE
+        Core.Variables.Events = new Events(); //DONE
+        Core.Variables.Events.bindAllEvents(); //DONE
         Core.Variables.MainScene = new Scene('scene'); //DONE
         Core.Variables.MainScene.recalcSize(); //DONE
         Core.Variables.Map = new Map(); //DONE

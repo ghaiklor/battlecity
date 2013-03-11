@@ -258,6 +258,7 @@ function Events() {
     //сама кнопка сохранения карты
     this.saveMapButton = document.getElementById(Core.Config.saveMapButtonId);
     //нажата ли кнопка мыши в редактора
+    this.returnToGameButton = document.getElementById(Core.Config.returnToGameButtonId);
     this.editorMousePressed = false;
     return this;
 }
@@ -393,6 +394,10 @@ Events.prototype = {
         Core.Variables.Editor.saveMapMaskToLocalStorage(this.saveMapNameInput.value);
         return true;
     },
+    //ф-ция возвращает в игру
+    returnToGameButtonOnClick: function() {
+        window.location = '../';
+    },
     //ф-ция вешает все обработчики на все элементы
     //комментирование считаю лишним, и так все ясно
     bindAllEvents: function() {
@@ -423,6 +428,9 @@ Events.prototype = {
         };
         this.saveMapButton.onmousedown = function(e) {
             self.saveMapButtonDown(e);
+        };
+        this.returnToGameButton.onmousedown = function(e) {
+            self.returnToGameButtonOnClick();
         };
         return true;
     }
@@ -480,6 +488,7 @@ var Core = {
         createNewMapButtonId: 'createMap-button', //кнопка создания новой карты
         saveMapNameInputId: 'nameMap-input', //ввод имени сохраняемой карты
         saveMapButtonId: 'saveMap-button', //кнопка сохранения карты
+        returnToGameButtonId: 'returnToGame-button', //кнопка возврата в игру
         tileWidth: 48, //ширина спрайта
         tileHeight: 48, //высота спрайта
         tileBrickSrc: '../images/brick.png', //картинка с кирпичем
