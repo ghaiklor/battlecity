@@ -247,19 +247,19 @@ Tank.prototype = {
     //3 - вода
     //TODO: реализовать здесь проверку коллизий и изменения скорости танка
     getBlockDown: function() {
-        var bottomCell = this.calculateCurrentCell(this.x, this.y + this.speed + this.height);
+        var bottomCell = this.calculateCurrentCell(this.x + this.width / 2, this.y + this.speed + this.height);
         return bottomCell;
     },
     getBlockUp: function() {
-        var upperCell = this.calculateCurrentCell(this.x, this.y - this.speed);
+        var upperCell = this.calculateCurrentCell(this.x + this.width / 2, this.y - this.speed);
         return upperCell;
     },
     getBlockLeft: function() {
-        var leftCell = this.calculateCurrentCell(this.x - this.speed, this.y);
+        var leftCell = this.calculateCurrentCell(this.x - this.speed, this.y + this.height / 2);
         return leftCell;
     },
     getBlockRight: function() {
-        var rightCell = this.calculateCurrentCell(this.x + this.speed + this.width, this.y);
+        var rightCell = this.calculateCurrentCell(this.x + this.speed + this.width, this.y + this.height / 2);
         return rightCell;
     },
     //это инкапсулированное свойство для направления танка
