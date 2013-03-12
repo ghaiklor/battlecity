@@ -12,7 +12,7 @@ function Scene(id) {
 }
 
 Scene.prototype = {
-    //ф-ция пересчитывает размеры сцены и рендера под размеры браузера
+//ф-ция пересчитывает размеры сцены и рендера под размеры браузера
     recalcSize: function() {
         this.width = window.innerWidth - 200;
         this.height = window.innerHeight;
@@ -31,7 +31,7 @@ function Game() {
 }
 
 Game.prototype = {
-    //ф-ция запрашивает каждый объект на обновление свойств
+//ф-ция запрашивает каждый объект на обновление свойств
     globalUpdateValues: function() {
         if (Core.Variables.Keyboard.keyPressed) {
             Core.Variables.PlayerTank.moveTank();
@@ -43,10 +43,10 @@ Game.prototype = {
         for (var h_index = 0; h_index < map.countTilesHeight; h_index++) {
             for (var w_index = 0; w_index < map.countTilesWidth; w_index++) {
                 switch (map.mask[h_index][w_index]) { //в зависимости от значения в маске он рисует нужное
-                    //0 - кирпич
-                    //1 - лес
-                    //2 - сталь
-                    //3 - вода
+//0 - кирпич
+//1 - лес
+//2 - сталь
+//3 - вода
                     case '0':
                         scene.context.drawImage(map.environment.brick, Core.Config.tileEnvironmentWidth * w_index + Core.Variables.Map.offsetXMap, Core.Config.tileEnvironmentHeight * h_index + Core.Variables.Map.offsetYMap, Core.Config.tileEnvironmentWidth, Core.Config.tileEnvironmentHeight);
                         break;
@@ -99,7 +99,7 @@ function Keyboard() {
 }
 
 Keyboard.prototype = {
-    //ф-ция конвертирует код клавиши в текстовое представление направления
+//ф-ция конвертирует код клавиши в текстовое представление направления
     convertCodeToDirection: function(code) {
         switch (code) {
             case 37:
@@ -116,10 +116,10 @@ Keyboard.prototype = {
     },
     //ф-ция обрабатывает нажатие клавиши вниз
     keyDown: function(e) {
-        //конвертирует с кода в текстовое направление
+//конвертирует с кода в текстовое направление
         var direction = this.convertCodeToDirection(e.keyCode);
         if (direction) {
-            //и если было изменено направление, то задаем игровому танку новое направление
+//и если было изменено направление, то задаем игровому танку новое направление
             Core.Variables.PlayerTank.setDirection(direction);
             this.keyPressed = true; //и еще поставим флаг нажатой клавиши
             //Core.Variables.Console.writeDebug('Key is press: ' + this.keyPressed);
@@ -128,11 +128,11 @@ Keyboard.prototype = {
     },
     //ф-ция обрабатывает отпускание клавиши
     keyUp: function(e) {
-        //проверяем для начала, нажата ли клавиша со стрелками
-        //да, туповато TODO: optimize this function
+//проверяем для начала, нажата ли клавиша со стрелками
+//да, туповато TODO: optimize this function
         var direction = this.convertCodeToDirection(e.keyCode);
         if (direction) {
-            //просто снимаем флаг нажатой клавиши при отпускании
+//просто снимаем флаг нажатой клавиши при отпускании
             this.keyPressed = false;
             //Core.Variables.Console.writeDebug('Key is press: ' + this.keyPressed);
         }
@@ -157,8 +157,8 @@ function GameTimer() {
 }
 
 GameTimer.prototype = {
-    //ф-ция записывает на объект игры созданный таймер игры
-    //запускает ф-цию прорисовки сцены в переданном объекте игры
+//ф-ция записывает на объект игры созданный таймер игры
+//запускает ф-цию прорисовки сцены в переданном объекте игры
     startGame: function(game) {
         game.gameTimer = setInterval(function() {
             game.drawScene();
@@ -262,10 +262,34 @@ Tank.prototype = {
         var rightCell = this.calculateCurrentCell(this.x + this.speed + this.width, this.y + this.height / 2);
         return rightCell;
     },
-    //это инкапсулированное свойство для направления танка
-    //в direction передается строка направления танка
-    //возможны 4 варианта "up", "down", "right", "left"
-    //ф-ция задает строковое и цифровое представление направления
+    getBlockFromLeftUpAndRightUp: function() {
+        return {
+            leftUp: this.calculateCurrentCell(this.x, this.y),
+            rightUp: this.calculateCurrentCell(this.x + this.width, this.y)
+        };
+    },
+    getBlockFromLeftDownAndRightDown: function() {
+        return {
+            leftDown: this.calculateCurrentCell(this.x, this.y + this.height),
+            rightDown: this.calculateCurrentCell(this.x + this.width, this.y + this.height)
+        };
+    },
+    getBlockFromUpLeftAndDownLeft: function() {
+        return {
+            upLeft: this.calculateCurrentCell(this.x, this.y),
+            downLeft: this.calculateCurrentCell(this.x, this.y + this.height)
+        };
+    },
+    getBlockFromUpRightAndDownRight: function() {
+        return {
+            upRight: this.calculateCurrentCell(this.x + this.width, this.y),
+            downRight: this.calculateCurrentCell(this.x + this.width, this.y + this.height)
+        };
+    },
+//это инкапсулированное свойство для направления танка
+//в direction передается строка направления танка
+//возможны 4 варианта "up", "down", "right", "left"
+//ф-ция задает строковое и цифровое представление направления
     setDirection: function(direction) {
         this.strDirection = direction;
         this.direction = this.convertDirectionToInteger(direction);
@@ -292,35 +316,42 @@ Tank.prototype = {
     //изменяет значения относительно текущей скорости танка
     moveTank: function() {
         var self = this;
-
         function calculateNewPosition(direction) {
             switch (direction) {
                 case 'up':
                     if (self.checkInsideMapUp(Core.Variables.Map)) {
-                        self.y = self.y - self.speed;
+                        if (['-1', '1', '3'].indexOf(self.getBlockFromLeftUpAndRightUp().leftUp) != -1 && ['-1', '1', '3'].indexOf(self.getBlockFromLeftUpAndRightUp().rightUp) != -1) {
+                            self.y = self.y - self.speed;
+                        }
                     }
                     break;
                 case 'down':
                     if (self.checkInsideMapDown(Core.Variables.Map)) {
-                        self.y = self.y + self.speed;
+                        if (['-1', '1', '3'].indexOf(self.getBlockFromLeftDownAndRightDown().leftDown) != -1 && ['-1', '1', '3'].indexOf(self.getBlockFromLeftDownAndRightDown().rightDown) != -1) {
+                            self.y = self.y + self.speed;
+                        }
                     }
                     break;
                 case 'left':
                     if (self.checkInsideMapLeft(Core.Variables.Map)) {
-                        self.x = self.x - self.speed;
+                        if (['-1', '1', '3'].indexOf(self.getBlockFromUpLeftAndDownLeft().upLeft) != -1 && ['-1', '1', '3'].indexOf(self.getBlockFromUpLeftAndDownLeft().downLeft) != -1) {
+                            self.x = self.x - self.speed;
+                        }
                     }
                     break;
                 case 'right':
                     if (self.checkInsideMapRight(Core.Variables.Map)) {
-                        self.x = self.x + self.speed;
+                        if (['-1', '1', '3'].indexOf(self.getBlockFromUpRightAndDownRight().upRight) != -1 && ['-1', '1', '3'].indexOf(self.getBlockFromUpRightAndDownRight().downRight) != -1) {
+                            self.x = self.x + self.speed;
+                        }
                     }
                     break;
                 default:
                     break;
             }
         }
-        //Core.Variables.Console.writeDebug('Current Cell = [' + this.currentCell + ']');
-        //Core.Variables.Console.writeDebug('Tank X = ' + this.x + ', Tank Y = ' + this.y);
+//Core.Variables.Console.writeDebug('Current Cell = [' + this.currentCell + ']');
+//Core.Variables.Console.writeDebug('Tank X = ' + this.x + ', Tank Y = ' + this.y);
         switch (this.strDirection) {
             case 'up':
                 var blockUp = this.getBlockUp();
@@ -475,10 +506,10 @@ function Map() {
 }
 
 Map.prototype = {
-    //ф-ция заполняет маску карты значениями "-1"
-    //эти значения означают пустую карту, то есть никаких блоков нету
-    //эти же значения используются для отрисовки дороги
-    //TODO: на -1 нужно добавить еще спрайт дороги
+//ф-ция заполняет маску карты значениями "-1"
+//эти значения означают пустую карту, то есть никаких блоков нету
+//эти же значения используются для отрисовки дороги
+//TODO: на -1 нужно добавить еще спрайт дороги
     fillMaskWithZero: function(width, height) {
         this.mask = []; //инициализировали пустой массив в объекте
         for (var i = 0; i < height; i++) {
@@ -491,7 +522,7 @@ Map.prototype = {
     },
     //ф-ция расчитывает сдвиг карты относительно левого верхнего угла
     calculateOffsetMap: function() {
-        //ширина карты = количество спрайтов по ширине * ширину самого спрайта (его размер)
+//ширина карты = количество спрайтов по ширине * ширину самого спрайта (его размер)
         this.mapWidth = this.countTilesWidth * Core.Config.tileEnvironmentWidth;
         //высота карты = количество спрайтов по высоте * высоту самого спрайта (его размер)
         this.mapHeight = this.countTilesHeight * Core.Config.tileEnvironmentHeight;
@@ -534,33 +565,31 @@ Map.prototype = {
         if (localStorage.getItem(name) == undefined && name == 'default') {
             localStorage.setItem(name, Core.Config.defaultMapMask);
         }
-        //получаем значение маски и размеров карты с локального хранилища
-        //разбиваем его на массив
-        //в итоге получим вот такой массив:
-        //<ширина карты (количество тайлов)>, <высота карты (количество тайлов)>, <сама маска карты (значения от 0 до 3)>
+//получаем значение маски и размеров карты с локального хранилища
+//разбиваем его на массив
+//в итоге получим вот такой массив:
+//<ширина карты (количество тайлов)>, <высота карты (количество тайлов)>, <сама маска карты (значения от 0 до 3)>
         var maskArray = localStorage.getItem(name).split(',');
-
         this.countTilesHeight = maskArray[1]; //Второй элемент - это высота карты
         this.countTilesWidth = maskArray[0]; //Первый элемент - это ширина карты (количество блоков)
 
         //заполним маску карты "-1", то есть просто инициализируем массив маски
         this.fillMaskWithZero(this.countTilesWidth, this.countTilesHeight);
-
         //текущий индекс массива маски
         //т.к. в локальном хранилище можно хранить только строки, приходится изощряться
         //первые 2 элемента у нас размеры карты и лишь с 3 элемента идет сама маска
         var maskCurrentIndex = 2;
         for (var height = 0; height < this.countTilesHeight; height++) {
             for (var width = 0; width < this.countTilesWidth; width++) {
-                //в цикле перебираем всю строковую маску карты
-                //и присваиваем на маску текущего объекта значение данной клетки карты
+//в цикле перебираем всю строковую маску карты
+//и присваиваем на маску текущего объекта значение данной клетки карты
                 this.mask[height][width] = maskArray[maskCurrentIndex];
                 //и конечно же увеличим текущий индекс маски
                 maskCurrentIndex++;
             }
         }
-        //в итоге мы получим исходный вид массива, какой он был при сохранении в редакторе
-        //Core.Variables.Console.writeDebug('Map Mask: ' + this.mask);
+//в итоге мы получим исходный вид массива, какой он был при сохранении в редакторе
+//Core.Variables.Console.writeDebug('Map Mask: ' + this.mask);
     },
     loadAllMapsFromLocalStorage: function() {
         for (var map in localStorage) {
@@ -582,7 +611,7 @@ function Console() {
 }
 
 Console.prototype = {
-    //ф-ция проверяет, включен ли режим отладки
+//ф-ция проверяет, включен ли режим отладки
     checkDebugMode: function() {
         if (Core.Config.debugMode) {
             return true;
@@ -601,7 +630,6 @@ Console.prototype = {
         }
     }
 };
-
 function Events() {
     this.mapEditorButton = document.getElementById(Core.Config.mapEditorButtonId);
     this.changeMapSelect = document.getElementById(Core.Config.changeMapSelectId);
@@ -656,7 +684,7 @@ var Core = {
         defaultMapMask: '15,7,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,3,3,3,3,3,3,1,3,3,3,3,3,3,2,2,1,3,3,3,3,1,1,1,3,3,3,3,1,2,2,1,1,3,3,1,1,1,1,1,3,3,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2'
     },
     Variables: {
-        //тут хранятся все объекты, созданные конструктором
+//тут хранятся все объекты, созданные конструктором
         MainScene: null, //главная сцена, на которой все рисуем
         Game: null, //сама игра, в которой происходит отрисовка кадров
         GameTimer: null, //игровой таймер, в нем только старт и стоп
@@ -696,20 +724,19 @@ var Core = {
         Core.InitializeGame();
     }
 };
-
 //этой ф-цией дожидаюсь полной загрузки страницы
 //и при полной загрузке вызываю точку входа
 var documentReadyInterval = setInterval(function() {
-    //если документ загружен
+//если документ загружен
     if (document.readyState === 'complete') {
         Core.EntryPoint(); //точка входа в игру
         //очистили интервал ожидания загрузки страницы
         clearInterval(documentReadyInterval);
         //еще и задам на изменение размеров окна
         window.onresize = function() {
-            //если игра уже инициализирована
+//если игра уже инициализирована
             if (Core.Variables.MainScene != undefined) {
-                //пересчитать размеры сцены
+//пересчитать размеры сцены
                 Core.Variables.MainScene.recalcSize();
                 //и пересчитать размеры карты
                 Core.Variables.Map.calculateOffsetMap();
