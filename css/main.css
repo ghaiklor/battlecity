@@ -1,0 +1,243 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+#scene{
+    display: block;
+}
+
+.panel{
+    position: absolute;
+    width: 200px;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    background: #e2e2e2; /* Old browsers */
+    background: -moz-linear-gradient(left,  #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e2e2e2), color-stop(50%,#dbdbdb), color-stop(51%,#d1d1d1), color-stop(100%,#fefefe)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* IE10+ */
+    background: linear-gradient(to right,  #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=1 ); /* IE6-9 */
+    box-shadow: 4px 0px 3px 0px black inset;
+}
+
+.images{
+    margin: 20px auto;
+    text-align: center;
+}
+
+.images fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.images fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.one-image, .one-image img{
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+    margin: 1px;
+}
+
+.one-image img:hover{
+    border: 1px solid darkred;
+}
+
+.one-image img{
+    border: 1px solid black;
+}
+
+.one-image:hover{
+    cursor: pointer;
+}
+
+.one-image-active img{
+    outline: 2px solid darkred;
+}
+
+.spacer{
+    clear: both;
+}
+
+.panel .map-size{
+    text-align: center;
+    margin: 10px auto;
+}
+
+.panel .input-size input{
+    width: 50px;
+    border: 1px solid darkred;
+    padding: 5px;
+    text-align: center;
+}
+
+.panel .input-size input:focus{
+    box-shadow: 0px -2px 0px 0px darkred inset, 0px 0px 2px 0px black;
+}
+
+.panel .map-size button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.panel .map-size button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .map-size button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}
+
+.panel .map-size fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.panel .map-size legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.accept-input-size{
+    margin-top: 5px;
+}
+
+.copyright{
+    position: absolute;
+    bottom: 0px;
+    right: 17px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: .8em;
+    text-decoration: none;
+}
+
+.save fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.save fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.save input{
+    width: 100px;
+    border: 1px solid darkred;
+    padding: 5px;
+    text-align: center;
+}
+
+.save input:focus{
+    box-shadow: 0px -2px 0px 0px darkred inset, 0px 0px 2px 0px black;
+}
+
+.save button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.save button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.save button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}
+
+.panel .map{
+    margin: 10px auto;
+    text-align: center;
+}
+
+.panel .map fieldset{
+    width: 160px;
+    text-align: center;
+    margin: 0 auto;
+    padding: 10px;
+    font-size: .8em;
+    border: 1px solid darkred;
+}
+
+.panel .map fieldset legend{
+    border: 1px solid darkred;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+.panel .map select{
+    margin: 5px 0px;
+    border-radius: 0px;
+    border: 1px solid darkred;
+}
+
+.panel .map button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+}
+
+.panel .map button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .map button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}
+
+.panel .game{
+    margin: 10px auto;
+    text-align: center;
+}
+
+.panel .game button{
+    border: 1px solid darkred;
+    padding: 5px;
+    margin-top: 10px;
+    font-size: 1.1em;
+    outline: none;
+    font-size: .8em;
+}
+
+.panel .game button:hover{
+    box-shadow: 0px 0px 2px 0px black, 0px -2px 0px 0px darkred inset;
+    cursor: pointer;
+}
+
+.panel .game button:active{
+    box-shadow: 0px 0px 2px 1px black inset;
+}

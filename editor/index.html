@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="../css/main.css" rel="stylesheet" type="text/css"/>
+        <title>BattleCity - Map Editor</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div class="canvas-container">
+            <canvas id="scene" width="800" height="600">Update your browser, please</canvas>
+        </div>
+        <div class="panel">
+            <div class="map-size">
+                <fieldset>
+                    <legend>
+                        Размер карты:
+                    </legend>
+                    <div class="input-size">
+                        <input type="number" id="widthCountTiles-input" value="15"/>
+                        x
+                        <input type="number" id="heightCountTiles-input" value="7"/>
+                    </div>
+                    <div class="spacer"></div>
+                    <div class="accept-input-size">
+                        <button id="createMap-button">Создать карту</button>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="images">
+                <fieldset>
+                    <legend>
+                        Элементы карты:
+                    </legend>
+                    <div class="one-image" id="brick-button"><img src="../images/brick.png"/></div>
+                    <div class="one-image" id="forest-button"><img src="../images/forest.png"/></div>
+                    <div class="spacer"></div>
+                    <div class="one-image" id="steel-button"><img src="../images/steel.png"/></div>
+                    <div class="one-image" id="water-button"><img src="../images/water.png"/></div>
+                </fieldset>
+            </div>
+            <div class="save">
+                <fieldset>
+                    <legend>
+                        Сохранение карты:
+                    </legend>
+                    <input id="nameMap-input" type="text" placeholder="Имя карты..."/>
+                    <div class="spacer"></div>
+                    <button id="saveMap-button">Сохранить</button>
+                </fieldset>
+            </div>
+            <div class="game">
+                <button id="returnToGame-button">Назад в игру</button>
+            </div>
+            <div class="copyright">
+                <span>Разработчик:</span>
+                <div class="spacer"></div>
+                <span>&#169; Обрезков Евгений &#169;</span>
+                <div class="spacer"></div>
+                <span><a href="https://github.com/ghaiklor/battlecity" target="_blank">Sources on GitHub</a></span>
+                <div class="spacer"></div>
+                <span><a href="https://github.com/ghaiklor/battlecity/issues/new" target="_blank">Post issue on GitHub</a></span>
+            </div>
+        </div>
+
+        <script src="js/core.js"></script>
+    </body>
+</html>
