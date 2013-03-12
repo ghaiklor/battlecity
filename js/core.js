@@ -196,7 +196,11 @@ Tank.prototype = {
     calculateCurrentCell: function(x, y) {
         var indexX = Math.floor((x - Core.Variables.Map.offsetXMap) / Core.Config.tileEnvironmentWidth);
         var indexY = Math.floor((y - Core.Variables.Map.offsetYMap) / Core.Config.tileEnvironmentHeight);
-        return Core.Variables.Map.mask[indexY][indexX];
+        if (Core.Variables.Map.mask[indexY] != undefined) {
+            return Core.Variables.Map.mask[indexY][indexX];
+        } else {
+            return false;
+        }
     },
     //ф-ция проверяет, находится ли танк внутри карты (верхняя грань)
     checkInsideMapUp: function(map) {
@@ -322,6 +326,13 @@ Tank.prototype = {
                 var blockUp = this.getBlockUp();
                 Core.Variables.Console.writeDebug('Block up = ' + blockUp);
                 switch (blockUp) {
+                    case '-1':
+                        if (this.currentCell != -1) {
+                            this.currentCell = -1;
+                            this.speed = Core.Config.tankSpeed;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
                     case '0':
                         break;
                     case '1':
@@ -348,6 +359,13 @@ Tank.prototype = {
                 var blockDown = this.getBlockDown();
                 Core.Variables.Console.writeDebug('Block down = ' + blockDown);
                 switch (blockDown) {
+                    case '-1':
+                        if (this.currentCell != -1) {
+                            this.currentCell = -1;
+                            this.speed = Core.Config.tankSpeed;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
                     case '0':
                         break;
                     case '1':
@@ -369,12 +387,18 @@ Tank.prototype = {
                     default:
                         break;
                 }
-                calculateNewPosition(this.strDirection);
                 break;
             case 'left':
                 var blockLeft = this.getBlockLeft();
                 Core.Variables.Console.writeDebug('Block left = ' + blockLeft);
                 switch (blockLeft) {
+                    case '-1':
+                        if (this.currentCell != -1) {
+                            this.currentCell = -1;
+                            this.speed = Core.Config.tankSpeed;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
                     case '0':
                         break;
                     case '1':
@@ -401,6 +425,13 @@ Tank.prototype = {
                 var blockRight = this.getBlockRight();
                 Core.Variables.Console.writeDebug('Block right = ' + blockRight);
                 switch (blockRight) {
+                    case '-1':
+                        if (this.currentCell != -1) {
+                            this.currentCell = -1;
+                            this.speed = Core.Config.tankSpeed;
+                        }
+                        calculateNewPosition(this.strDirection);
+                        break;
                     case '0':
                         break;
                     case '1':
@@ -422,7 +453,6 @@ Tank.prototype = {
                     default:
                         break;
                 }
-                calculateNewPosition(this.strDirection);
                 break;
         }
     },
